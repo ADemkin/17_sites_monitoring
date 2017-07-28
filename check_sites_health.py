@@ -24,7 +24,8 @@ def is_server_respond_with_200(url):
 
 def get_domain_time_untill_expire(url):
     # using api for whoapi.com to check whois on a certain domain
-    params = {"apikey":'a7752dbdc9f6086b833baaca5a3f00a9', 'r':'whois', 'domain':'http://' + url}
+    api_key = 'fe7fa75b11aaf41fa205ba292787fd74'
+    params = {"apikey":api_key, 'r':'whois', 'domain':'http://' + url}
     request = requests.get('http://api.whoapi.com/', params=params)
     answer = request.json()
     if answer["registered"]:
@@ -32,6 +33,21 @@ def get_domain_time_untill_expire(url):
         now = datetime.datetime.now()
         time_untill_expire = expiration_date - now
         return time_untill_expire.days
+
+
+def print_site_health_info(url, ok_status, expiration_info):
+    if ok_status:
+        print("%s status: ok" % url)
+    else:
+        print("%s is down!" % url)
+    
+    if expiration_info:
+        if expiration_info > 30:
+            print('Domain health ok. %d days until expire.' % expiration_info)
+        else:
+            print("Warning! Domain will expire in %s days" % expiration_info)
+    else:
+        print("Domain is not registered.")
 
 
 if __name__ == '__main__':
@@ -42,19 +58,9 @@ if __name__ == '__main__':
         
         for url in urls_to_check:
             print('...')
-            
-            if is_server_respond_with_200(url):
-                print("%s status: ok" % url)
-            else:
-                print("%s is down!" % url)
-            
+            ok_status = is_server_respond_with_200(url)
             expiration_info = get_domain_time_untill_expire(url)
-            if expiration_info:
-                if expiration_info > 30:
-                    print('Domain health ok. %d days until expire.' % expiration_info)
-                else:
-                    print("Warning! Domain will expire in %s days" % expiration_info)
-            else:
-                print("Domain is not registered.")
+            print_site_health_info(url, ok_status, expiration_info)
+
     else:
         print("Usage: check_sites_health.py [path]")

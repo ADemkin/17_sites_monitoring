@@ -23,7 +23,6 @@ def is_server_respond_with_200(url):
 
 
 def get_domain_time_untill_expire(url):
-    # using api for whoapi.com to check whois on a certain domain
     api_key = 'fe7fa75b11aaf41fa205ba292787fd74'
     params = {"apikey":api_key, 'r':'whois', 'domain':'http://' + url}
     request = requests.get('http://api.whoapi.com/', params=params)

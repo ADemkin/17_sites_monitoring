@@ -12,14 +12,20 @@ pip3 instal -r requirements.txt
 
 # Usage:
 
-You need to create a text file with urls you want to check. 
+You need to create a text file with urls you want to check. To use [whois](whoapi.com) service you need to register, 
+receive your personal api key and put it into key.txt into the same folder with your check_sites_health.py script.
 
-sites.txt:
+__sites.txt:__
 ```
 facebook.com
 ya.ru
 megaupload.com
 specialized.com
+```
+
+__key.txt:__
+```
+fe7fa75b11aaf41fa205ba292787fd74
 ```
 
 Run this script using python 3 with a path as an argument.

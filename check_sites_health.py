@@ -22,8 +22,7 @@ def load_urls4check(path):
         with open(path) as file:
             all_urls = file.read().split('\n')
     except FileNotFoundError as error:
-        print('{}: {}'.format(error.strerror, path))
-        exit()
+        print('Filed to load url list. {}: {}'.format(error.strerror, path))
     else:
         return keep_only_urls_with_valid_protocol(all_urls)
 
@@ -54,7 +53,7 @@ def load_api_key():
 def get_domain_time_untill_expire(url, api_key):
     if api_key:
         params = {"apikey":api_key, 'r':'whois', 'domain':url}
-        request = requests.get('http://api.whoapi.com/', params=params)
+        request = requests.get('http://api.whoapi.com', params=params)
         answer = request.json()
         if answer["registered"]:
             expiration_date = datetime.datetime.strptime(answer["date_expires"], '%Y-%m-%d %H:%M:%S')
@@ -84,6 +83,8 @@ def main():
         exit()
     path = sys.argv[1]
     urls_to_check = load_urls4check(path)
+    if urls_to_check is None:
+        exit()
     api_key = load_api_key()
     for url in urls_to_check:
         print('...')

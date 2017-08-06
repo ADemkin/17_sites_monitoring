@@ -2,6 +2,10 @@
 
 This script will help you monitor sites health
 It will check web site status and domain expiration time left.
+
+Anton Demkin, 2017
+
+antondemkin@yandex.ru
 # Installation:
 Python 3 required.
 
@@ -12,15 +16,17 @@ pip3 instal -r requirements.txt
 
 # Usage:
 
-You need to create a text file with urls you want to check. To use [whois](whoapi.com) service you need to register, 
+You need to create a text file with urls you want to check. To use [whois](whoapi.com) service you need to [register](https://whoapi.com/user/signup), 
 receive your personal api key and put it into key.txt into the same folder with your check_sites_health.py script.
 
-__sites.txt:__
+Text file with urls __must__ contain a valid urls with protocol. If you dont specify protocol, the url wont be checked.
+
+__sites.txt:__ (you may use your own file name)
 ```
-facebook.com
-ya.ru
-megaupload.com
-specialized.com
+https://www.facebook.com
+https://www.ya.ru
+http://megaupload.com
+http://specialized.com
 ```
 
 __key.txt:__

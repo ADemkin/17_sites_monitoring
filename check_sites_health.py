@@ -4,39 +4,56 @@ import datetime
 import re
 
 
+def keep_only_urls_with_valid_protocol(urls):
+    # check if url contain exactly http:// or https://
+    protocols_regexp = re.compile('https?:\/\/')
+    valid_urls = []
+    for url in urls:
+        match = protocols_regexp.match(url)
+        if match:
+            valid_urls.append(url)
+        else:
+            print("{} is not a valid url. Protocol is missing.".format(url))
+    return valid_urls
+
+
 def load_urls4check(path):
-    with open(path) as file:
-        # remove http:// or https://
-        urls = re.sub('(https?)?:\/\/', '', file.read()).split('\n')
-    return urls
+    try:
+        with open(path) as file:
+            all_urls = file.read().split('\n')
+    except FileNotFoundError as error:
+        print('{}: {}'.format(error.strerror, path))
+        exit()
+    else:
+        return keep_only_urls_with_valid_protocol(all_urls)
 
 
 def is_server_respond_with_200(url):
     try:
-        request = requests.get(url='http://' + url)
+        request = requests.get(url=url)
     except requests.exceptions.ConnectionError:
         return False
     else:
         if request.ok:
             return True
 
+
 def load_api_key():
     try:
         with open('key.txt') as file:
             key = file.read()
     except FileNotFoundError:
-        print("Failed to load key.txt. Whois service is not availabe.")
+        print("Failed to load key.txt. Whois service is not available.")
     else:
-        if len(key) > 1:
+        if key:
             return key
         else:
             return None
-    
 
 
 def get_domain_time_untill_expire(url, api_key):
     if api_key:
-        params = {"apikey":api_key, 'r':'whois', 'domain':'http://' + url}
+        params = {"apikey":api_key, 'r':'whois', 'domain':url}
         request = requests.get('http://api.whoapi.com/', params=params)
         answer = request.json()
         if answer["registered"]:
@@ -44,24 +61,21 @@ def get_domain_time_untill_expire(url, api_key):
             now = datetime.datetime.now()
             time_untill_expire = expiration_date - now
             return time_untill_expire.days
-    else:
-        return -1
+
 
 def print_site_health_info(url, ok_status, expiration_info):
     if ok_status:
-        print("%s status code: ok" % url)
+        print("%s status: ok" % url)
     else:
-        print("%s is down!" % url)
+        print("%s is down" % url)
     
     if expiration_info:
         if expiration_info > 30:
             print('Domain health ok. %d days until expire.' % expiration_info)
-        elif expiration_info is -1:
-            pass
         else:
             print("Warning! Domain will expire in %s days!" % expiration_info)
     else:
-        print("Domain is not registered.")
+        print("No data on this domain.")
 
 
 def main():
@@ -80,5 +94,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    #print(load_api_key())
-    #print(len(sys.argv))

@@ -27,14 +27,15 @@ def load_urls4check(path):
         return keep_only_urls_with_valid_protocol(all_urls)
 
 
+
 def is_server_respond_with_200(url):
     try:
         request = requests.get(url=url)
     except requests.exceptions.ConnectionError:
         return False
     else:
-        if request.ok:
-            return True
+        return bool(request.ok)
+
 
 
 def load_api_key():
@@ -69,7 +70,8 @@ def print_site_health_info(url, ok_status, expiration_info):
         print("%s is down" % url)
     
     if expiration_info:
-        if expiration_info > 30:
+        month = 30
+        if expiration_info > month:
             print('Domain health ok. %d days until expire.' % expiration_info)
         else:
             print("Warning! Domain will expire in %s days!" % expiration_info)
